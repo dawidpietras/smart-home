@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  weather_sensor:
+    build: ./sensor
+    container_name: weather_station
+    volumes:
+      - .:/usr/src/app
+  
+  mqtt_broker:

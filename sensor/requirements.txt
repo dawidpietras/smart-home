@@ -1,0 +1,4 @@
+RPi.bme280
+smbus2
+paho-mqtt
+pyyaml
