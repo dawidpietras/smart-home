@@ -1,7 +1,7 @@
 weather_sensor:
   i2c_port: 1
   i2c_address: 0x76
-  broker_address: "192.168.68.105"
+  broker_address: mqtt_broker
   broker_port: 1883
   data_topic: sensor
   request_topic: sensor/get

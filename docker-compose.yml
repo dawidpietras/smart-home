@@ -5,6 +5,23 @@ services:
     build: ./sensor
     container_name: weather_station
     volumes:
-      - .:/usr/src/app
-  
+      - /home/pi/smart_home:/usr/bin/app
+    devices:
+      - "/dev/i2c-1:/dev/i2c-1"
+    environment:
+      - TZ=Europe/Warsaw
+    depends_on:
+      - mqtt_broker
+
+
   mqtt_broker:
+      image: eclipse-mosquitto:2.0
+      container_name: mosquitto-broker
+      restart: unless-stopped
+      ports:
+        - "1883:1883"
+        - "9001:9001"
+      volumes:
+        - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+        - ./mosquitto/data:/mosquitto/data
+        - ./mosquitto/log:/mosquitto/log
