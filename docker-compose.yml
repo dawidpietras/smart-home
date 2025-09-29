@@ -12,7 +12,17 @@ services:
       - TZ=Europe/Warsaw
     depends_on:
       - mqtt_broker
-
+  
+  dashboard:
+    build: ./dashboard
+    container_name: dashboard
+    ports: 
+      - "8501:8501"
+    restart: always
+    volumes:
+      - /home/pi/smart_home:/usr/bin/app
+    depends_on:
+      - mqtt_broker
 
   mqtt_broker:
       image: eclipse-mosquitto:2.0

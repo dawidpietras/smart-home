@@ -55,20 +55,19 @@ def on_message(client, userdata, msg):
 if __name__ == "__main__":
     
     full_config = load_config()
-    
-    config = full_config["weather_sensor"]
-    
-    if config:
+    config_weather = full_config["weather_sensor"]
+    config_broker = full_config["broker"]
+    if full_config:
         global DATA_TOPIC, REQUEST_TOPIC
-        I2C_PORT = config.get("i2c_port")
-        print(I2C_PORT)
-        I2C_ADDRESS = config.get("i2c_address")
+        I2C_PORT = config_weather.get("i2c_port")
+        I2C_ADDRESS = config_weather.get("i2c_address")
 
-        BROKER_ADDRESS = config.get("broker_address")
-        BROKER_PORT = config.get("broker_port")
-        DATA_TOPIC = config.get("data_topic")
-        REQUEST_TOPIC = config.get("request_topic")
-    
+        BROKER_ADDRESS = config_broker.get("broker_address")
+        BROKER_PORT = config_broker.get("broker_port")
+        DATA_TOPIC = config_weather.get("data_topic")
+        REQUEST_TOPIC = config_weather.get("request_topic")
+    else:
+        print("Nie mogę uruchomić aplikacji z powodu błędnej konfiguracji.")
     
     bus = smbus2.SMBus(I2C_PORT)
 
