@@ -1,0 +1,1 @@
+RUN apt-get update && apt-get install chromium-browser sudo apt-get install chromium-chromedriver
