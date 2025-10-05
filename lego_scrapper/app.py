@@ -1,43 +1,58 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.chrome.service import Service
+import requests
+import json
+import yaml
+import os
+
+from bs4 import BeautifulSoup as bs
 
 URL = "https://www.lego.com/pl-pl/product/captain-jack-sparrows-pirate-ship-10365"
+SYSTEM_CA_BUNDLE = '/etc/ssl/certs/ca-certificates.crt'
 
-options = Options()
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage') 
-options.add_argument('--disable-gpu')
-DRIVER_PATH ='/usr/bin/chromedriver'
-service = Service(DRIVER_PATH)
+APP_TOKEN = os.environ.get("LEGO_APP_TOKEN", 'axqb5973zrcu3ed7bmya8e13izhx6z')
+USER_TOKEN = os.environ.get("LEGO_USER_TOKEN", 'u65vsygubbicdo7uskjj477zvh1ah9')
+PUSHOVER_URL = os.environ.get("PUSHOVER_URL", "https://api.pushover.net/1/messages.json")
 
-try:
-    driver = webdriver.Chrome(service=service, options=options)
-except Exception as e:
-    print(f"Error during initialization. Details: {e}")
-    exit()
+HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'}
 
-wait = WebDriverWait(driver, 20)
 
-print(f"Forwarding to page: {URL}")
+def get_data_from_web():
+    
+    """
+        Return data from LEGO page regarding price and availability.
+    """
+    
+    response = requests.get(URL, headers=headers, verify=SYSTEM_CA_BUNDLE)
+    response.raise_for_status()
 
-driver.get(URL)
+    soup = bs(response.text, 'html.parser')
 
-price_group = wait.until(
-    EC.presence_of_element_located
-    ((By.CSS_SELECTOR, 'span[data-test="product-price-display-price"]')))
+    price_element = soup.select_one('span[data-test="product-price-display-price"]')
+    if price_element:
+        price = price_element.get_text(strip=True)
+        print(f"Cena: {price}")
+    else:
+        print("Cena: Element nie został znaleziony w statycznym HTML.")
+        
+    availability_element = soup.select_one('span[data-test="product-overview-availability"]')
 
-price = price_group.text.strip()
+    if availability_element:
+        availability = availability_element.get_text(strip=True).split('się')[1]
+        print(f"Dostępność: {availability}")
+    else:
+        print("Dostępność: Element nie został znaleziony w statycznym HTML.")
 
-availability_group = wait.until(
-    EC.presence_of_element_located
-    ((By.CSS_SELECTOR, 'span[data-test="product-overview-availability"]')))
+def pushover_handler()
 
-availability = availability_group.text.strip().split('się')[1]
+payload = {
+    "token": APP_TOKEN,
+    'user': USER_TOKEN,
+    "message": None,
+    "title": 'Lego Jack\'s Ship Status',
+    "sound": "bike"
+}
 
-print(price, availability)
+payload['message'] = f'{price} {availability}'
+
+response = requests.post(PUSHOVER_URL, data = payload)
+
+print(response.status_code)

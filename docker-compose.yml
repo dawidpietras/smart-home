@@ -5,7 +5,7 @@ services:
     build: ./sensor
     container_name: weather_station
     volumes:
-      - /home/pi/smart_home:/usr/bin/app
+      - /home/pi/smart_home/config.yaml:/usr/bin/app/config.yaml
     devices:
       - "/dev/i2c-1:/dev/i2c-1"
     environment:
@@ -20,7 +20,7 @@ services:
       - "8501:8501"
     restart: always
     volumes:
-      - /home/pi/smart_home:/usr/bin/app
+      - /home/pi/smart_home/config.yaml:/usr/bin/app/config.yaml
     depends_on:
       - mqtt_broker
 
