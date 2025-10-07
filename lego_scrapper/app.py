@@ -56,7 +56,7 @@ def get_data_from_web() -> LegoData:
         response.raise_for_status()
         logger.info("Succesfully scraped the website. Status 200.")
     except requests.exceptions.RequestException as e:
-        logger.error("Connection error: {e}", exc_info=True)
+        logger.error("Lego web connection error: {e}", exc_info=True)
         raise e
 
     soup = bs(response.text, 'html.parser')
@@ -90,7 +90,7 @@ def pushover_handler(lego_data: LegoData):
         response.raise_for_status()
         logger.info("Message successfully pushed.")
     except requests.exceptions.RequestException as e:
-        logger.error("Connection error: {e}", exc_info=True)
+        logger.error(f"Pushover connection error: {e}", exc_info=True)
 
 if __name__ == "__main__":
     data = get_data_from_web()

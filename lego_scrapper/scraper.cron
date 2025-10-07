@@ -1,1 +1,4 @@
-0 10 * * * /usr/local/bin/python /app/app.py >> /var/log/cron.log 2>&1
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/app
+
+0 8,10 * * * root /bin/bash -c 'source /etc/environment.cron && /usr/local/bin/python3 /app/app.py' >> /proc/1/fd/1 2>&1

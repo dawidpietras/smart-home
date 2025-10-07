@@ -1,6 +1,9 @@
-FROM python:3.11-slim
+FROM python:3.11-bookworm
 
 WORKDIR /app
+
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 COPY requirements.txt ./
 
@@ -15,7 +18,8 @@ COPY app.py .
 
 COPY scraper.cron /etc/cron.d/scraper-job
 
-RUN chmod 0644 /etc/cron.d/scraper-job \
-    && crontab /etc/cron.d/scraper-job
+RUN chmod 0644 /etc/cron.d/scraper-job
 
-CMD ["cron", "-f"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+CMD []
